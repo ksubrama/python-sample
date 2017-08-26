@@ -1,6 +1,6 @@
 from disjointsets.satisfiable import satisfiable
 import random
-import itertools
+from itertools import chain, combinations, starmap, product
 
 
 class TestSatisfiable:
@@ -20,25 +20,23 @@ class TestSatisfiable:
 
   def connect_linear(self, buckets):
     # 1,2  3,4  5,6  ... within each bucket.  Then shuffle.
-    return self.shuffle(itertools.chain.from_iterable(
+    return self.shuffle(chain.from_iterable(
         zip(bucket[1:], bucket[:-1]) for bucket in buckets))
 
   def connect_combo(self, buckets):
     # All combinations within each bucket.
-    print(list(itertools.combinations(bucket, 2) for bucket in buckets))
-    return self.shuffle(itertools.chain.from_iterable(
-        itertools.combinations(bucket, 2) for bucket in buckets))
+    return self.shuffle(chain.from_iterable(
+        combinations(bucket, 2) for bucket in buckets))
 
   def connect_rand(self, buckets):
     # Take pool of all values from all buckets and form pairs.
-    return self.shuffle(itertools.combinations(
-        itertools.chain.from_iterable(buckets), 2))
+    return self.shuffle(combinations(
+        chain.from_iterable(buckets), 2))
 
   def connect_cross(self, buckets):
     # Cross between every pair of bucket but no pairs within a bucket.
-    return self.shuffle(itertools.chain.from_iterable(
-        itertools.starmap(itertools.product, 
-            itertools.combinations(buckets, 2))))
+    return self.shuffle(chain.from_iterable(
+        starmap(product, combinations(buckets, 2))))
 
   def test_good_linear(self):
     buckets = self.select_points(self.buckets, 100)
@@ -75,4 +73,3 @@ class TestSatisfiable:
     ineqs = self.rand.sample(eqs, 1)
 
     assert not satisfiable(eqs, ineqs)
-

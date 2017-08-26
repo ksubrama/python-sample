@@ -1,4 +1,4 @@
-.PHONY: init test run
+.PHONY: init lint test run
 .DEFAULT_GOAL := test
 
 init:
